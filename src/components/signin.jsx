@@ -1,22 +1,81 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/signin.module.css";
+import { useDispatch, useSelector } from "react-redux";
+import { signInUserWithGoogle, signInUserWithEmail } from "../redux/authSlice";
 
 const signin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
+  const dispatch = useDispatch();
+  const data = useSelector((state) => state.authentication);
+  const handleGoggleSignIn = () => {
+    try {
+      dispatch(signInUserWithGoogle());
+      console.log("User created successfully!");
+    } catch (error) {
+      setError(error);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email.length === 0) {
+      setError("Invalid Password");
+      setShowError(true);
+      return;
+    }
+    if (password.length === 0) {
+      setError("password is too short!");
+      setShowError(true);
+      return;
+    }
+    try {
+      dispatch(signInUserWithEmail({ email, password }));
+      const data = useSelector((state) => state.authentication);
+    } catch (error) {
+      setError(error);
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => {
+      setShowError(false);
+    }, 1500);
+  }, [error]);
   return (
     <div className={styles.formContainer}>
       <p className={styles.title}>Login</p>
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.inputGroup}>
           <label htmlFor="username">Email</label>
-          <input type="text" name="username" id="username" placeholder="" />
+          <input
+            type="text"
+            name="email"
+            id="email"
+            placeholder=""
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div className={styles.inputGroup}>
           <label htmlFor="password">Password</label>
-          <input type="password" name="password" id="password" placeholder="" />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder=""
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
-        <button className={styles.sign}>Sign in</button>
+        <button type="submit" className={styles.sign}>
+          Sign in
+        </button>
       </form>
+      {data?.error ? (
+        <p className={styles.error}> {data?.error} </p>
+      ) : (
+        <>{showError && error && <p>{error}</p>}</>
+      )}
       <div className={styles.forgot}>
         <a rel="noopener noreferrer" href="#">
           Forgot Password?
@@ -28,17 +87,19 @@ const signin = () => {
         <div className={styles.line} />
       </div>
       <div className={styles.socialIcons}>
-        <button aria-label="Log in with Google" className={styles.icon}>
+        <button
+          aria-label="Log in with Google"
+          className={styles.icon}
+          onClick={handleGoggleSignIn}
+        >
           <img src="./assets/google.svg" alt="google" width={36} height={36} />
           <p>Log in with google</p>
         </button>
       </div>
       <p className={styles.signup}>
         Don't have an account?
-        <Link to={"/signup"}>
-          <a rel="noopener noreferrer" href="#" className="">
-            Sign up
-          </a>
+        <Link className="link" to={"/signup"}>
+          Sign up
         </Link>
       </p>
     </div>

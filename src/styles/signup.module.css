@@ -37,7 +37,7 @@
     outline: 0;
     background-color: #fff;
     padding: 0.75rem 1rem;
-    color: rgba(243, 244, 246, 1);
+    color: #000;
   }
   .inputGroup input:focus {
     border-color: rgba(167, 139, 250);
@@ -51,12 +51,12 @@
     color: blue;
   }
   
-  .forgot a,.signup a {
+  .forgot a,.signup .link {
     text-decoration: none;
     font-size: 14px;
   }
   
-  .forgot a:hover, .signup a:hover {
+  .forgot a:hover, .signup .link:hover {
     text-decoration: underline rgba(167, 139, 250, 1);
   }
   .sign {
@@ -72,7 +72,12 @@
     cursor: pointer;
     margin-top: 1rem;
   }
-  
+  .error{
+    text-align: center;
+    color: red;
+    font-size: 12px;
+    margin: 10px 0;
+  }
   .socialMessage {
     display: flex;
     align-items: center;
