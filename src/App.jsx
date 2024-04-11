@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthPage from './components/authPage'
-import Signin from './components/signin'
-import Signup from './components/signup'
+import AuthPage from "./components/authPage";
+import Signin from "./components/signin";
+import Signup from "./components/signup";
 import Home from "./pages/home";
+import Dashboard from "./pages/personalDashboard";
 
 function App() {
   return (
@@ -16,7 +17,10 @@ function App() {
     //      </Route>
     //   </Routes>
     // </BrowserRouter>
-    <Home />
+    <>
+      <Home />
+      <Dashboard />
+    </>
   );
 }
 

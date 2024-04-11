@@ -1,6 +1,79 @@
 import React from "react";
 import styles from "../styles/card.module.css";
 
+export const Card7 = () => {
+  return (
+    <div className={styles.card}>
+      <h1 className={styles.card_title}>Nothing to be done😎</h1>
+      <div className={styles.box}>
+         <img src="./assets/img.png" alt="bg" />
+      </div>
+    </div>
+  )
+}
+
+export const Card6 = () => {
+  const taskList = [
+    'Request moving estimate',
+    'order moving boxes'
+  ]
+  return (
+    <div className={styles.card}>
+      <div className={styles.profiles}>
+        <div className={styles.profile}>
+          <img src="./assets/react.svg" alt="" />
+        </div>
+      </div>
+      <h1 className={styles.card_title}>Move</h1>
+      <div className={styles.body}>
+        <p>
+          Survive moving place in the pandemic. 
+        </p>
+        {taskList?.map((items, idx) => (
+          <div className={styles.list} key={idx}>
+            <div className={styles.box}>
+              <div></div>
+            </div>
+            <p>{items}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const Card5 = () => {
+  const taskList = [
+    "Accountant contract",
+    "Request work payslips",
+    "Cancel VAT ID",
+  ];
+  return (
+    <div className={styles.card}>
+      <h1 className={styles.card_title}>Taxes 😊</h1>
+      <div className={styles.body}>
+        {taskList?.map((items, idx) => (
+          <div className={styles.list} key={idx}>
+            <div className={styles.box}>
+              <div></div>
+            </div>
+            <p>{items}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export const Card4 = () => {
+  return (
+    <div className={styles.card}>
+      <h1 className={styles.card_title}>Take Coco to a vet</h1>
+      <div className={styles.label}>Due 4/11</div>
+    </div>
+  );
+};
+
 export const Card3 = () => {
   const taskList = [
     "Schedule Time",
@@ -19,9 +92,7 @@ export const Card3 = () => {
       </div>
       <h1 className={styles.card_title}>Cultural Workshop</h1>
       <div className={styles.body}>
-        <p>
-          Let's build a great team.
-        </p>
+        <p>Let's build a great team.</p>
         {taskList?.map((items, idx) => (
           <div className={styles.list} key={idx}>
             <div className={styles.box}>
