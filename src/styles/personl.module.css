@@ -41,6 +41,9 @@
   flex: 1;
   overflow-x: auto;
 }
+.board::-webkit-scrollbar{
+  display: none;
+}
 
 .board1 {
   width: calc((100% - 2rem - 2px) / 3);

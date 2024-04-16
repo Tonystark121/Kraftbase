@@ -8,6 +8,7 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 // firebase
@@ -23,12 +24,12 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 // intial state
 const initialState = {
-  user: null,
+  user: {},
   isLoding: false,
   error: null,
 };
@@ -38,7 +39,6 @@ export const signInUserWithGoogle = createAsyncThunk(
   async () => {
     try {
       const response = await signInWithPopup(auth, provider);
-      console.log(response);
       return response.user;
     } catch (err) {
       console.error(err);
@@ -52,7 +52,6 @@ export const signInUserWithEmail = createAsyncThunk(
   async ({ email, password }) => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      console.log(response);
       return response.user;
     } catch (err) {
       console.error(err);
@@ -63,18 +62,22 @@ export const signInUserWithEmail = createAsyncThunk(
 
 export const createUserWithEmail = createAsyncThunk(
   "authentication/createUserWithEmail",
-  async ({ email, password }) => {
+  async ({ email, password, userName }) => {
     try {
       const response = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      console.log(response);
-      return response.user;
+      if (response) {
+        return {
+          values:response.user,
+          name: userName
+        }
+      }
     } catch (err) {
       console.error(err);
-      throw err;
+      throw new Error(err + ", please try again");
     }
   }
 );
@@ -82,7 +85,34 @@ export const createUserWithEmail = createAsyncThunk(
 const authSlice = createSlice({
   name: "authentication",
   initialState,
-  reducers: {},
+  reducers: {
+    updateUser: (state, action) => {
+      if (Object.values(action.payload) !== 0) {
+        const profile = {
+          id: action.payload.uid,
+          userName: action.payload.displayName
+            ? action.payload.displayName
+            : "Rajeev Kumar",
+          email: action.payload.email,
+        };
+        return {
+          ...state,
+          user: {
+            profile: profile,
+            notStartedNotes: [],
+            inProgressNotes: [],
+            blockedNotes: [],
+            doneNotes: [],
+          },
+        };
+      } else {
+        return {
+          ...state,
+          user: {},
+        };
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(signInUserWithGoogle.pending, (state, action) => {
@@ -91,7 +121,24 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signInUserWithGoogle.fulfilled, (state, action) => {
-        (state.isLoding = false), (state.user = action.payload);
+        const profile = {
+          id: action.payload.uid,
+          userName: action.payload.displayName
+            ? action.payload.displayName
+            : "Rajeev Kumar",
+          email: action.payload.email,
+        };
+        return {
+          ...state,
+          user: {
+            profile: profile,
+            notStartedNotes: [],
+            inProgressNotes: [],
+            blockedNotes: [],
+            doneNotes: [],
+          },
+          isLoding: false,
+        };
       })
       .addCase(signInUserWithGoogle.rejected, (state, action) => {
         console.log("Authentication Rejected");
@@ -103,10 +150,27 @@ const authSlice = createSlice({
       })
       .addCase(signInUserWithEmail.rejected, (state, action) => {
         state.isLoding = false;
-        state.error = action.error.message
+        state.error = action.error.message;
       })
       .addCase(createUserWithEmail.fulfilled, (state, action) => {
-        (state.loading = true), (state.error = null);
+        const profile = {
+          id: action.payload.values.uid,
+          userName: action.payload.values.displayName
+            ? action.payload.displayName
+            : action.payload.name,
+          email: action.payload.values.email,
+        };
+        return {
+          ...state,
+          user: {
+            profile: profile,
+            notStartedNotes: [],
+            inProgressNotes: [],
+            blockedNotes: [],
+            doneNotes: [],
+          },
+          isLoding: false,
+        };
       })
       .addCase(createUserWithEmail.rejected, (state, action) => {
         console.log("Authentication Failed");
@@ -117,3 +181,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+export const { updateUser } = authSlice.actions;
